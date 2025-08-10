@@ -3,37 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTG Compteur V3</title>
+    <title>Compteur MTG</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="setup-screen">
-        <h1>Configuration des joueurs</h1>
-        <label>Nombre de joueurs :</label>
+    <div id="config-screen">
+        <h1>Configuration</h1>
+        <label for="player-count">Nombre de joueurs :</label>
         <select id="player-count">
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
         </select>
-        <label>Points de vie initiaux :</label>
+        <label for="starting-life">Points de vie de départ :</label>
         <select id="starting-life">
             <option value="20">20</option>
             <option value="30">30</option>
             <option value="40">40</option>
         </select>
-        <div id="players-setup"></div>
+        <div id="player-configs"></div>
         <button id="start-game">Commencer</button>
     </div>
 
     <div id="game-screen" class="hidden">
-        <div id="counters"></div>
-        <div id="tools">
-            <button onclick="rollDice(6)">Dé 6</button>
-            <button onclick="rollDice(20)">Dé 20</button>
-            <button onclick="flipCoin()">Pile ou Face</button>
-            <div id="result"></div>
+        <div id="top-players"></div>
+        <div id="center-controls">
+            <button id="dice6">Dé 6</button>
+            <button id="dice20">Dé 20</button>
+            <button id="flipCoin">Pile/Face</button>
+            <button id="back-to-config">⚙</button>
+            <div id="dice-result"></div>
         </div>
-        <button id="reset">Retour config</button>
+        <div id="bottom-players"></div>
     </div>
 
     <script src="script.js"></script>

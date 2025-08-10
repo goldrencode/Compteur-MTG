@@ -1,69 +1,85 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background: #111;
+    font-family: sans-serif;
+    background-color: #222;
     color: white;
-    text-align: center;
-}
-
-.hidden {
-    display: none;
-}
-
-#setup-screen {
-    padding: 20px;
-}
-
-.player-setup {
-    margin: 10px 0;
-}
-
-input[type='color'] {
-    margin-left: 10px;
-}
-
-#counters {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    height: 80vh;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hidden { display: none; }
+
+#config-screen, #game-screen {
+    width: 100%;
+    max-width: 800px;
+    padding: 10px;
+}
+
+#player-configs div {
+    margin: 5px 0;
 }
 
 .counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     border: 3px solid white;
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    width: 40%;
-    min-width: 150px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    min-width: 120px;
 }
 
-.counter-top {
-    transform: rotate(180deg);
+.counter .life {
+    font-size: 3em;
+    font-weight: bold;
 }
 
-.life {
-    font-size: 2em;
-    margin: 10px 0;
+.counter .sub-counters {
+    margin-top: 5px;
+    width: 100%;
 }
 
 .sub-counter {
-    margin: 3px 0;
-    padding: 3px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(255,255,255,0.1);
+    padding: 2px 5px;
+    margin: 2px 0;
     border-radius: 5px;
-    font-size: 0.9em;
 }
 
-button {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    background: #444;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
+.counter button {
+    margin: 2px;
+    font-size: 1.2em;
+}
+
+#top-players, #bottom-players {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#top-players .counter {
+    transform: rotate(180deg);
+}
+
+#center-controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#dice-result {
+    font-size: 1.5em;
+    margin-top: 5px;
+}
+
+/* Mode 2 joueurs : agrandir */
+.two-players .counter .life {
+    font-size: 5em;
+}
+.two-players .counter button {
+    font-size: 2em;
+    padding: 5px 10px;
 }

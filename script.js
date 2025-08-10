@@ -1,106 +1,145 @@
 let players = [];
+let playerCount = 2;
+let startingLife = 20;
 
-document.getElementById('player-count').addEventListener('change', createPlayerInputs);
-document.getElementById('start-game').addEventListener('click', startGame);
-document.getElementById('reset').addEventListener('click', () => {
-    document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('setup-screen').classList.remove('hidden');
+const configScreen = document.getElementById("config-screen");
+const gameScreen = document.getElementById("game-screen");
+const playerConfigsDiv = document.getElementById("player-configs");
+const topPlayersDiv = document.getElementById("top-players");
+const bottomPlayersDiv = document.getElementById("bottom-players");
+
+document.getElementById("player-count").addEventListener("change", generatePlayerConfig);
+document.getElementById("start-game").addEventListener("click", startGame);
+document.getElementById("back-to-config").addEventListener("click", () => {
+    gameScreen.classList.add("hidden");
+    configScreen.classList.remove("hidden");
 });
 
-function createPlayerInputs() {
-    const count = parseInt(document.getElementById('player-count').value);
-    const container = document.getElementById('players-setup');
-    container.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-        const div = document.createElement('div');
-        div.classList.add('player-setup');
+document.getElementById("dice6").addEventListener("click", () => rollDice(6));
+document.getElementById("dice20").addEventListener("click", () => rollDice(20));
+document.getElementById("flipCoin").addEventListener("click", flipCoin);
+
+function generatePlayerConfig() {
+    playerCount = parseInt(document.getElementById("player-count").value);
+    startingLife = parseInt(document.getElementById("starting-life").value);
+    playerConfigsDiv.innerHTML = "";
+    for (let i = 0; i < playerCount; i++) {
+        const div = document.createElement("div");
         div.innerHTML = `
-            Joueur ${i+1} : 
-            <input type="text" id="name-${i}" placeholder="Nom du joueur">
-            Couleur : <input type="color" id="color-${i}" value="#ffffff">
+            Joueur ${i+1} :
+            <input type="text" placeholder="Nom" id="name-${i}">
+            Couleur : <input type="color" id="color-${i}" value="#${Math.floor(Math.random()*16777215).toString(16)}">
         `;
-        container.appendChild(div);
+        playerConfigsDiv.appendChild(div);
     }
 }
 
 function startGame() {
-    const count = parseInt(document.getElementById('player-count').value);
-    const startLife = parseInt(document.getElementById('starting-life').value);
     players = [];
-    for (let i = 0; i < count; i++) {
-        const name = document.getElementById(`name-${i}`).value || `Joueur ${i+1}`;
-        const color = document.getElementById(`color-${i}`).value;
+    playerCount = parseInt(document.getElementById("player-count").value);
+    startingLife = parseInt(document.getElementById("starting-life").value);
+    for (let i = 0; i < playerCount; i++) {
         players.push({
-            name,
-            color,
-            life: startLife
+            name: document.getElementById(`name-${i}`).value || `Joueur ${i+1}`,
+            life: startingLife,
+            color: document.getElementById(`color-${i}`).value,
+            subCounters: Array(playerCount - 1).fill(startingLife)
         });
     }
-    renderCounters();
-    document.getElementById('setup-screen').classList.add('hidden');
-    document.getElementById('game-screen').classList.remove('hidden');
+    renderGame();
+    configScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
 }
 
-function renderCounters() {
-    const container = document.getElementById('counters');
-    container.innerHTML = '';
-    const count = players.length;
+function renderGame() {
+    topPlayersDiv.innerHTML = "";
+    bottomPlayersDiv.innerHTML = "";
+    gameScreen.classList.toggle("two-players", playerCount === 2);
 
-    players.forEach((player, index) => {
-        const counterDiv = document.createElement('div');
-        counterDiv.classList.add('counter');
-        
-        if (index < 2) {
-            counterDiv.classList.add('counter-top');
-        }
+    let topCount = Math.floor(playerCount / 2);
+    let bottomCount = playerCount - topCount;
 
-        counterDiv.style.borderColor = player.color;
+    let topPlayers = players.slice(0, topCount);
+    let bottomPlayers = players.slice(topCount);
 
-        const nameDiv = document.createElement('div');
-        nameDiv.textContent = player.name;
-        counterDiv.appendChild(nameDiv);
+    topPlayers.forEach((p, index) => {
+        const idx = index;
+        topPlayersDiv.appendChild(createCounter(p, idx));
+    });
 
-        const lifeDiv = document.createElement('div');
-        lifeDiv.classList.add('life');
-        lifeDiv.textContent = player.life;
-        counterDiv.appendChild(lifeDiv);
-
-        const controls = document.createElement('div');
-        controls.innerHTML = `
-            <button onclick="changeLife(${index}, 1)">+1</button>
-            <button onclick="changeLife(${index}, -1)">-1</button>
-        `;
-        counterDiv.appendChild(controls);
-
-        if (count > 2) {
-            players.forEach((p, i) => {
-                if (i !== index) {
-                    const sub = document.createElement('div');
-                    sub.classList.add('sub-counter');
-                    sub.style.backgroundColor = p.color;
-                    sub.textContent = `Commandant de ${p.name}: 0`;
-                    counterDiv.appendChild(sub);
-                }
-            });
-        }
-
-        container.appendChild(counterDiv);
+    bottomPlayers.forEach((p, index) => {
+        const idx = index + topCount;
+        bottomPlayersDiv.appendChild(createCounter(p, idx));
     });
 }
 
-function changeLife(index, amount) {
-    players[index].life += amount;
-    renderCounters();
+function createCounter(player, index) {
+    const counterDiv = document.createElement("div");
+    counterDiv.className = "counter";
+    counterDiv.style.borderColor = player.color;
+    counterDiv.innerHTML = `
+        <div class="life">${player.life}</div>
+        <div>
+            <button class="life-plus" data-index="${index}">+</button>
+            <button class="life-minus" data-index="${index}">-</button>
+        </div>
+        <div class="sub-counters">
+            ${players.length > 2 ? generateSubCountersHTML(index) : ""}
+        </div>
+    `;
+    return counterDiv;
 }
 
+function generateSubCountersHTML(playerIndex) {
+    let html = "";
+    let otherPlayers = players.filter((_, i) => i !== playerIndex);
+    otherPlayers.forEach((op, idx) => {
+        html += `
+            <div class="sub-counter" style="background-color:${op.color};">
+                <span>Commandant de ${op.name}</span>
+                <div>
+                    <button class="sub-plus" data-pi="${playerIndex}" data-si="${idx}">+</button>
+                    <span>${players[playerIndex].subCounters[idx]}</span>
+                    <button class="sub-minus" data-pi="${playerIndex}" data-si="${idx}">-</button>
+                </div>
+            </div>
+        `;
+    });
+    return html;
+}
+
+// Gestion des clics avec délégation pour éviter le bug
+document.body.addEventListener("click", e => {
+    if (e.target.classList.contains("life-plus")) {
+        let idx = parseInt(e.target.dataset.index);
+        players[idx].life++;
+        renderGame();
+    }
+    if (e.target.classList.contains("life-minus")) {
+        let idx = parseInt(e.target.dataset.index);
+        players[idx].life--;
+        renderGame();
+    }
+    if (e.target.classList.contains("sub-plus")) {
+        let pi = parseInt(e.target.dataset.pi);
+        let si = parseInt(e.target.dataset.si);
+        players[pi].subCounters[si]++;
+        renderGame();
+    }
+    if (e.target.classList.contains("sub-minus")) {
+        let pi = parseInt(e.target.dataset.pi);
+        let si = parseInt(e.target.dataset.si);
+        players[pi].subCounters[si]--;
+        renderGame();
+    }
+});
+
 function rollDice(sides) {
-    const result = Math.floor(Math.random() * sides) + 1;
-    document.getElementById('result').textContent = `Résultat dé ${sides} : ${result}`;
+    document.getElementById("dice-result").innerText = `🎲 ${Math.floor(Math.random() * sides) + 1}`;
 }
 
 function flipCoin() {
-    const result = Math.random() < 0.5 ? 'Pile' : 'Face';
-    document.getElementById('result').textContent = `Résultat : ${result}`;
+    document.getElementById("dice-result").innerText = Math.random() > 0.5 ? "Pile" : "Face";
 }
 
-createPlayerInputs();
+generatePlayerConfig();
