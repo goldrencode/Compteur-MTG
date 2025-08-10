@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTG Compteur de Vie</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#222">
+</head>
+<body>
+  <div id="setup">
+    <h1>MTG Compteur</h1>
+    <label>Nombre de joueurs :
+      <select id="playerCount">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </label>
+    <label>Points de vie initiaux :
+      <select id="startingLife">
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+      </select>
+    </label>
+    <button id="startGame">Démarrer</button>
+  </div>
+
+  <div id="game" class="hidden">
+    <div id="counters"></div>
+
+    <div id="tools">
+      <button onclick="rollDice(6)">🎲 D6</button>
+      <button onclick="rollDice(20)">🎲 D20</button>
+      <button onclick="flipCoin()">🪙 Pièce</button>
+      <button onclick="toggleSubCounters()">⚙ Sous-compteurs</button>
+      <p id="result"></p>
+    </div>
+    <button id="resetGame">🔄 Réinitialiser</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

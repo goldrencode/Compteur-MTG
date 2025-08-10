@@ -1,0 +1,61 @@
+body {
+  font-family: 'Trebuchet MS', sans-serif;
+  background: url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+#counters {
+  display: grid;
+  gap: 15px;
+  padding: 20px;
+}
+
+.counter {
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.counter.mirror {
+  transform: rotate(180deg);
+}
+
+.life {
+  font-size: 2.5em;
+  margin: 10px 0;
+}
+
+.sub-counters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.sub-counter {
+  background: rgba(255,255,255,0.1);
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.8em;
+}
+
+.sub-counter button {
+  font-size: 1em;
+  margin: 2px;
+}
